@@ -1,9 +1,40 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { Stethoscope, Activity, Heart, Brain, FileText, Menu } from 'lucide-react';
 
 export default function DashboardLayout() {
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [messages, setMessages] = useState([]); // Store chat messages
+  const [input, setInput] = useState(""); // Store user input
+
+  // Function to handle sending messages
+  const handleSend = async () => {
+    if (!input.trim()) return;
+
+    // Add the user's message to the chat
+    const userMessage = { text: input, sender: "user" };
+    setMessages((prev) => [...prev, userMessage]);
+
+    try {
+      // Send the user's input to the Flask backend
+      const response = await fetch("http://localhost:5000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input }),
+      });
+
+      const data = await response.json();
+
+      // Add the AI's response to the chat
+      const botMessage = { text: data.response, sender: "bot" };
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+
+    // Clear the input field
+    setInput("");
+  };
 
   return (
     <div className="min-h-screen w-full bg-[#111827]"> {/* Dark background for entire app */}
@@ -72,6 +103,26 @@ export default function DashboardLayout() {
               <button className="px-4 py-2 bg-[#2D3748] text-white rounded-md hover:bg-[#374151] transition-colors">
                 New Session
               </button>
+
+              {/* Chat Messages */}
+              <div className="mt-4 space-y-4 overflow-y-auto max-h-[calc(100vh-400px)]">
+                {messages.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                  >
+                    <div
+                      className={`max-w-[70%] p-3 rounded-lg ${
+                        msg.sender === "user"
+                          ? "bg-blue-600 text-white"
+                          : "bg-[#2D3748] text-gray-100"
+                      }`}
+                    >
+                      {msg.text}
+                    </div>
+                  </div>
+                ))}
+              </div>
               
               {/* Chat Input */}
               <div className="absolute bottom-6 left-6 right-6">
@@ -79,9 +130,15 @@ export default function DashboardLayout() {
                   <input 
                     type="text"
                     placeholder="Enter your response or ask a question"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && handleSend()}
                     className="w-full bg-[#2D3748] text-white rounded-md py-3 px-4 pr-12 border border-gray-600 focus:border-blue-500 focus:outline-none"
                   />
-                  <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-400">
+                  <button
+                    onClick={handleSend}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-400"
+                  >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
                     </svg>
