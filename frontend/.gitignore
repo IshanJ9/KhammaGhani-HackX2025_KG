@@ -9,6 +9,11 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+/frontend/google-login/node_modules
+/frontend/.next
+/frontend/node_modules
+/.streamlit
+/.venv
 
 # testing
 /coverage

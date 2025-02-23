@@ -1,5 +1,10 @@
 .streamlit/secrets.toml
 
+frontend/google-login/node_modules/
+frontend/.next/
+frontend/node_modules/
+node_modules/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -52,6 +57,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+
 
 # Translations
 *.mo
