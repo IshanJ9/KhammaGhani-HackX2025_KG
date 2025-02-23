@@ -2,7 +2,7 @@ import streamlit as st
 import snowflake.connector
 from flask import Flask, request, jsonify
 from snowflake.snowpark import Session
-from snowflake.cortex import Complete, Search
+from snowflake.cortex import Complete
 from snowflake.core import Root
 import json
 import pandas as pd
