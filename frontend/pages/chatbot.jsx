@@ -13,14 +13,15 @@ export default function DashboardLayout() {
 
     // Add the user's message to the chat
     const userMessage = { text: input, sender: "user" };
-    setMessages((prev) => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
 
     try {
-      // Send the user's input to the Flask backend
-      const response = await fetch("http://localhost:5000/chat", {
+      // Send the user's input and conversation history to the Flask backend
+      const response = await fetch("http://localhost:5000/get_response", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ conversation_history: updatedMessages }),
       });
 
       const data = await response.json();
